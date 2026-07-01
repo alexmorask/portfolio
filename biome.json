@@ -16,7 +16,14 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "preset": "recommended"
+      "preset": "recommended",
+      "suspicious": {
+        "noUnknownAtRules": "off"
+      }
+    },
+    "domains": {
+      "next": "recommended",
+      "react": "recommended"
     }
   },
   "formatter": {
@@ -34,5 +41,10 @@
   },
   "files": {
     "ignoreUnknown": false
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
   }
 }

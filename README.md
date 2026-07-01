@@ -22,7 +22,7 @@ pnpm install
 pnpm dev
 ```
 
-(`pnpm dev` will be added once Next.js is scaffolded in a later phase.)
+Visit `http://localhost:3000`.
 
 ## License
 
