@@ -1,0 +1,26 @@
+{
+  "name": "portfolio",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "author": "Alex Morask",
+  "description": "Personal portfolio and system design write-ups — alexmorask.com",
+  "packageManager": "pnpm@9.10.0",
+  "engines": {
+    "node": ">=20.17.0"
+  },
+  "volta": {
+    "node": "20.17.0",
+    "pnpm": "9.10.0"
+  },
+  "scripts": {
+    "check": "biome check .",
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "typecheck": "tsc --noEmit",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.2"
+  }
+}
