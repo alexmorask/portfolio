@@ -164,7 +164,7 @@ export default function MockHomePage() {
                   fontFamily="IBM Plex Mono, monospace"
                   fontSize="11"
                 >
-                  mermaid — idempotent write path
+                  diagram — idempotent write path
                 </text>
               </svg>
             </div>
