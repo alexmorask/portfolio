@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { IdempotentWritePathDiagram } from "@/components/idempotent-write-path-diagram";
 import { Footer } from "@/components/layout/footer";
 import { Nav } from "@/components/layout/nav";
 import { SiteContainer } from "@/components/layout/site-container";
+import { IdempotentWritePathDiagram } from "@/components/mock/idempotent-write-path-diagram";
 
 export default function MockWriteUpPage() {
   return (

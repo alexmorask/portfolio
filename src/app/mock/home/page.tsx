@@ -3,7 +3,7 @@ import { Footer } from "@/components/layout/footer";
 import { Nav } from "@/components/layout/nav";
 import { SectionEyebrow } from "@/components/layout/section-eyebrow";
 import { SiteContainer } from "@/components/layout/site-container";
-import { TerminalCard } from "@/components/terminal-card";
+import { TerminalCard } from "@/components/mock/terminal-card";
 
 export default function MockHomePage() {
   return (
