@@ -1,0 +1,28 @@
+heading: "Hi, I'm Alex."
+introParagraph1: >-
+  I'm a staff software engineer who's spent the last decade inside the parts
+  of the stack most engineers avoid: billing engines, payment ledgers, and
+  the pricing logic that decides what customers actually owe.
+introParagraph2: >-
+  I started out building CRUD apps like everyone else, but a production
+  incident involving a double-charged customer changed my trajectory — I've
+  been obsessed with correctness in money-moving systems ever since.
+backgroundParagraph1: >-
+  My career has followed the money — literally. I've built billing platforms
+  for a B2B SaaS company scaling into enterprise contracts, rebuilt the
+  payment ledger for a global marketplace processing billions in annual
+  volume, and now lead the re-architecture of a fintech's core billing engine
+  as it expands into hybrid usage and subscription pricing.
+backgroundParagraph2: >-
+  What keeps me in this corner of engineering is the stakes: get a payments
+  system wrong and it's not a bad UX, it's a customer's money. That
+  constraint makes for some of the most interesting distributed-systems
+  problems I've come across — idempotency, reconciliation, exactly-once
+  semantics in a world where "exactly once" is a polite fiction.
+howIWork:
+  - text: "Correctness first — in billing, a fast wrong answer is worse than a slow right one."
+  - text: "Design for retries and failure from day one — networks drop packets, and your ledger has to assume they will."
+  - text: "Write it down — the write-ups on this site are the same docs I'd hand a new hire on day one."
+beyondTheLedger: >-
+  Outside of work I'm usually rock climbing, tinkering with home espresso,
+  or arguing that the CAP theorem applies to more of life than it should.

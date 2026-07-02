@@ -64,7 +64,7 @@ describe("ContentService", () => {
 
     const program = Effect.gen(function* () {
       const service = yield* ContentService;
-      return yield* service.readEntry("nonexistent");
+      return yield* service.readWriteUp("nonexistent");
     }).pipe(Effect.provide(ContentServiceLive));
 
     const result = await Effect.runPromiseExit(program);
@@ -78,17 +78,17 @@ describe("ContentService", () => {
     }
   });
 
-  it("returns mock entry for known slug", async () => {
+  it("returns seed entry for known slug", async () => {
     const { ContentServiceLive, ContentService } = await import("./content-service");
 
     const program = Effect.gen(function* () {
       const service = yield* ContentService;
-      return yield* service.readEntry("mock-entry");
+      return yield* service.readWriteUp("designing-an-idempotent-payment-ledger");
     }).pipe(Effect.provide(ContentServiceLive));
 
     const entry = await Effect.runPromise(program);
 
-    expect(entry.slug).toBe("mock-entry");
-    expect(entry.title).toBe("Mock System Design");
+    expect(entry.slug).toBe("designing-an-idempotent-payment-ledger");
+    expect(entry.title).toBe("Designing an Idempotent Payment Ledger");
   });
 });
