@@ -1,29 +1,52 @@
 import { collection, config, fields, singleton } from "@keystatic/core";
 
-const tagOptions = [
-  { label: "Billing", value: "billing" },
-  { label: "Payments", value: "payments" },
-  { label: "Distributed Systems", value: "distributed-systems" },
-  { label: "Reliability", value: "reliability" },
-  { label: "Idempotency", value: "idempotency" },
-  { label: "Ledger", value: "ledger" },
-  { label: "Reconciliation", value: "reconciliation" },
-  { label: "Monetization", value: "monetization" },
-  { label: "Pricing", value: "pricing" },
-  { label: "Architecture", value: "architecture" },
-  { label: "API Design", value: "api-design" },
-  { label: "Database Design", value: "database-design" },
-];
-
 export default config({
   storage: {
     kind: "local",
   },
   collections: {
-    writeUps: collection({
-      label: "Write-ups",
+    tags: collection({
+      label: "Tags",
+      slugField: "name",
+      path: "content/tags/*/",
+      schema: {
+        name: fields.slug({
+          name: {
+            label: "Slug",
+            validation: { length: { min: 1 } },
+          },
+        }),
+        label: fields.text({
+          label: "Display Name",
+          validation: { length: { min: 1 } },
+        }),
+      },
+    }),
+    navLinks: collection({
+      label: "Nav Links",
+      slugField: "label",
+      path: "content/nav-links/*/",
+      schema: {
+        label: fields.slug({
+          name: {
+            label: "Label",
+            validation: { length: { min: 1 } },
+          },
+        }),
+        url: fields.text({
+          label: "URL",
+          validation: { length: { min: 1 } },
+        }),
+        sortOrder: fields.integer({
+          label: "Sort Order",
+          defaultValue: 0,
+        }),
+      },
+    }),
+    posts: collection({
+      label: "Posts",
       slugField: "title",
-      path: "content/write-ups/*/",
+      path: "content/posts/*/",
       format: { contentField: "body" },
       schema: {
         title: fields.slug({
@@ -32,21 +55,13 @@ export default config({
             validation: { length: { min: 1 } },
           },
         }),
-        kind: fields.select({
-          label: "Kind",
-          options: [
-            { label: "Personal Project", value: "personal-project" },
-            { label: "Case Study", value: "case-study" },
-          ],
-          defaultValue: "personal-project",
-        }),
         summary: fields.text({
           label: "Summary",
           multiline: true,
         }),
-        tags: fields.multiselect({
+        tags: fields.multiRelationship({
           label: "Tags",
-          options: tagOptions,
+          collection: "tags",
         }),
         publishedAt: fields.date({
           label: "Published",
@@ -73,64 +88,87 @@ export default config({
       label: "Home Page",
       path: "content/home/",
       schema: {
-        heroEyebrow: fields.text({
-          label: "Hero Eyebrow",
-          description:
-            'Mono text above the heading (e.g., "STAFF SOFTWARE ENGINEER — BILLING, PAYMENTS & MONETIZATION")',
-        }),
-        heroHeading: fields.text({
-          label: "Hero Heading",
-          description: "Your name / main heading",
-        }),
-        heroParagraph1: fields.text({
-          label: "Intro Paragraph",
-          multiline: true,
-        }),
-        heroParagraph2: fields.text({
-          label: "Secondary Paragraph",
-          multiline: true,
-        }),
-        focusAreas: fields.array(
-          fields.object({
-            text: fields.text({
-              label: "Focus Area",
-            }),
-            sortOrder: fields.integer({
-              label: "Sort Order",
-              defaultValue: 0,
-            }),
-          }),
+        hero: fields.object(
           {
-            label: "Focus Areas",
-            itemLabel: (item) =>
-              (
-                (item as { fields?: { text?: { value?: string } } })?.fields?.text?.value ??
-                "New focus area"
-              ).slice(0, 60),
-          },
-        ),
-        experience: fields.array(
-          fields.object({
-            title: fields.text({ label: "Title" }),
-            date: fields.text({ label: "Date" }),
-            company: fields.text({ label: "Company" }),
-            description: fields.text({
-              label: "Description",
+            eyebrow: fields.text({
+              label: "Eyebrow",
+              description:
+                'Mono text above the heading (e.g., "STAFF SOFTWARE ENGINEER — BILLING, PAYMENTS & MONETIZATION")',
+            }),
+            heading: fields.text({
+              label: "Heading",
+              description: "Your name / main heading",
+            }),
+            introParagraph: fields.text({
+              label: "Intro Paragraph",
               multiline: true,
             }),
-            sortOrder: fields.integer({
-              label: "Sort Order",
-              defaultValue: 0,
+            secondaryParagraph: fields.text({
+              label: "Secondary Paragraph",
+              multiline: true,
             }),
-          }),
-          {
-            label: "Experience",
-            itemLabel: (item) =>
-              (
-                (item as { fields?: { title?: { value?: string } } })?.fields?.title?.value ??
-                "New role"
-              ).slice(0, 60),
           },
+          { label: "Hero", description: "Primary hero section at the top of the page" },
+        ),
+        focusAreas: fields.object(
+          {
+            heading: fields.text({
+              label: "Section Heading",
+              defaultValue: "01 / FOCUS AREAS",
+            }),
+            items: fields.array(
+              fields.object({
+                text: fields.text({
+                  label: "Focus Area",
+                }),
+                sortOrder: fields.integer({
+                  label: "Sort Order",
+                  defaultValue: 0,
+                }),
+              }),
+              {
+                label: "Items",
+                itemLabel: (item) =>
+                  (
+                    (item as { fields?: { text?: { value?: string } } })?.fields?.text?.value ??
+                    "New focus area"
+                  ).slice(0, 60),
+              },
+            ),
+          },
+          { label: "Focus Areas", description: "Grid of focus / specialty areas" },
+        ),
+        experience: fields.object(
+          {
+            heading: fields.text({
+              label: "Section Heading",
+              defaultValue: "02 / EXPERIENCE",
+            }),
+            items: fields.array(
+              fields.object({
+                title: fields.text({ label: "Title" }),
+                date: fields.text({ label: "Date" }),
+                company: fields.text({ label: "Company" }),
+                description: fields.text({
+                  label: "Description",
+                  multiline: true,
+                }),
+                sortOrder: fields.integer({
+                  label: "Sort Order",
+                  defaultValue: 0,
+                }),
+              }),
+              {
+                label: "Roles",
+                itemLabel: (item) =>
+                  (
+                    (item as { fields?: { title?: { value?: string } } })?.fields?.title?.value ??
+                    "New role"
+                  ).slice(0, 60),
+              },
+            ),
+          },
+          { label: "Experience", description: "Timeline of professional experience" },
         ),
       },
     }),
@@ -138,47 +176,71 @@ export default config({
       label: "About Page",
       path: "content/about/",
       schema: {
-        heading: fields.text({
-          label: "Heading",
-          description: 'e.g., "Hi, I\'m Alex."',
-        }),
-        introParagraph1: fields.text({
-          label: "Intro Paragraph 1",
-          multiline: true,
-        }),
-        introParagraph2: fields.text({
-          label: "Intro Paragraph 2",
-          multiline: true,
-        }),
-        backgroundParagraph1: fields.text({
-          label: "Background Paragraph 1",
-          multiline: true,
-        }),
-        backgroundParagraph2: fields.text({
-          label: "Background Paragraph 2",
-          multiline: true,
-        }),
-        howIWork: fields.array(
-          fields.object({
-            text: fields.text({
-              label: "Bullet",
+        intro: fields.object(
+          {
+            heading: fields.text({
+              label: "Heading",
+              description: 'e.g., "Hi, I\'m Alex."',
+            }),
+            introParagraph: fields.text({
+              label: "Intro Paragraph",
               multiline: true,
             }),
-          }),
-          {
-            label: "How I Work",
-            itemLabel: (item) =>
-              (
-                (item as { fields?: { text?: { value?: string } } })?.fields?.text?.value ??
-                "New bullet"
-              ).slice(0, 60),
+            secondaryParagraph: fields.text({
+              label: "Secondary Paragraph",
+              multiline: true,
+            }),
           },
+          { label: "Intro", description: "Opening section of the About page" },
         ),
-        beyondTheLedger: fields.text({
-          label: "Beyond the Ledger",
-          multiline: true,
-          description: "Personal/hobby paragraph",
-        }),
+        background: fields.object(
+          {
+            body: fields.text({
+              label: "Body",
+              multiline: true,
+            }),
+          },
+          { label: "Background", description: "Professional background and experience" },
+        ),
+        howIWork: fields.object(
+          {
+            heading: fields.text({
+              label: "Section Heading",
+              defaultValue: "HOW I WORK",
+            }),
+            items: fields.array(
+              fields.object({
+                text: fields.text({
+                  label: "Bullet",
+                  multiline: true,
+                }),
+              }),
+              {
+                label: "Bullets",
+                itemLabel: (item) =>
+                  (
+                    (item as { fields?: { text?: { value?: string } } })?.fields?.text?.value ??
+                    "New bullet"
+                  ).slice(0, 60),
+              },
+            ),
+          },
+          { label: "How I Work", description: "Bulleted list of work principles" },
+        ),
+        beyondTheLedger: fields.object(
+          {
+            heading: fields.text({
+              label: "Section Heading",
+              defaultValue: "BEYOND THE LEDGER",
+            }),
+            body: fields.text({
+              label: "Body",
+              multiline: true,
+              description: "Personal/hobby paragraph",
+            }),
+          },
+          { label: "Beyond the Ledger", description: "Personal interests and hobbies" },
+        ),
       },
     }),
   },

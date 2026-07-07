@@ -5,13 +5,19 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
-const navLinks = [
-  { href: "/mock/about", label: "About" },
-  { href: "/mock/write-up", label: "Writing" },
-  { href: "/mock/contact", label: "Contact" },
+export interface NavLink {
+  readonly label: string;
+  readonly url: string;
+}
+
+const fallbackLinks: NavLink[] = [
+  { label: "About", url: "/mock/about" },
+  { label: "Writing", url: "/mock/write-up" },
+  { label: "Contact", url: "/mock/contact" },
 ];
 
-export function Nav() {
+export function Nav({ links }: { links?: readonly NavLink[] }) {
+  const navLinks = links ?? fallbackLinks;
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -28,11 +34,11 @@ export function Nav() {
 
       <nav className="hidden items-center gap-8 lg:flex">
         {navLinks.map((link) => {
-          const isActive = pathname === link.href;
+          const isActive = pathname === link.url;
           return (
             <Link
-              key={link.href}
-              href={link.href}
+              key={link.url}
+              href={link.url}
               className={cn(
                 "font-mono text-[11px] font-medium uppercase tracking-[0.12em] transition-colors duration-150",
                 isActive ? "text-primary" : "text-text-tertiary hover:text-primary",
@@ -58,11 +64,11 @@ export function Nav() {
       {mobileOpen && (
         <nav className="absolute left-0 right-0 top-full z-50 flex flex-col gap-4 border-b border-white/8 bg-card px-5 py-6 lg:hidden">
           {navLinks.map((link) => {
-            const isActive = pathname === link.href;
+            const isActive = pathname === link.url;
             return (
               <Link
-                key={link.href}
-                href={link.href}
+                key={link.url}
+                href={link.url}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
                   "font-mono text-xs font-medium uppercase tracking-wider",

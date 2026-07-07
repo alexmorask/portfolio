@@ -1,45 +1,50 @@
-heroEyebrow: "STAFF SOFTWARE ENGINEER — BILLING, PAYMENTS & MONETIZATION"
-heroHeading: "Alex Morask"
-heroParagraph1: >-
-  I design and build the systems that move money — billing engines, payment
-  infrastructure, and monetization platforms that scale to millions of
-  transactions.
-heroParagraph2: >-
-  Over the past decade I've led billing and payments platforms at
-  high-growth fintech and marketplace companies — from idempotent ledger
-  design to usage-based pricing engines processing billions in GMV. I write
-  about the hard, unglamorous problems in payment systems: reconciliation,
-  correctness under failure, and pricing models that scale.
+hero:
+  eyebrow: "STAFF SOFTWARE ENGINEER — BILLING, PAYMENTS & MONETIZATION"
+  heading: "Alex Morask"
+  introParagraph: >-
+    I design and build the systems that move money — billing engines, payment
+    infrastructure, and monetization platforms that scale to millions of
+    transactions.
+  secondaryParagraph: >-
+    Over the past decade I've led billing and payments platforms at
+    high-growth fintech and marketplace companies — from idempotent ledger
+    design to usage-based pricing engines processing billions in GMV. I write
+    about the hard, unglamorous problems in payment systems: reconciliation,
+    correctness under failure, and pricing models that scale.
 focusAreas:
-  - text: Billing Systems
-    sortOrder: 1
-  - text: Payment Infrastructure
-    sortOrder: 2
-  - text: Monetization Strategy
-    sortOrder: 3
-  - text: Usage-Based Pricing
-    sortOrder: 4
-  - text: Ledger & Reconciliation
-    sortOrder: 5
-  - text: Distributed Systems Design
-    sortOrder: 6
+  heading: "01 / FOCUS AREAS"
+  items:
+    - text: Billing Systems
+      sortOrder: 1
+    - text: Payment Infrastructure
+      sortOrder: 2
+    - text: Monetization Strategy
+      sortOrder: 3
+    - text: Usage-Based Pricing
+      sortOrder: 4
+    - text: Ledger & Reconciliation
+      sortOrder: 5
+    - text: Distributed Systems Design
+      sortOrder: 6
 experience:
-  - title: Staff Software Engineer, Billing Platform
-    date: "2022 — Present"
-    company: Bitwarden
-    description: >-
-      Leading the billing and monetization infrastructure for an open-source
-      security platform serving millions of users.
-    sortOrder: 1
-  - title: Senior Software Engineer, Payments Infrastructure
-    date: "2019 — 2022"
-    company: ""
-    description: >-
-      Built idempotent payment ledgers and reconciliation pipelines.
-    sortOrder: 2
-  - title: Software Engineer, Growth & Monetization
-    date: "2016 — 2019"
-    company: ""
-    description: >-
-      Designed usage metering and invoicing systems.
-    sortOrder: 3
+  heading: "02 / EXPERIENCE"
+  items:
+    - title: Staff Software Engineer, Billing Platform
+      date: "2022 — Present"
+      company: Bitwarden
+      description: >-
+        Leading the billing and monetization infrastructure for an open-source
+        security platform serving millions of users.
+      sortOrder: 1
+    - title: Senior Software Engineer, Payments Infrastructure
+      date: "2019 — 2022"
+      company: ""
+      description: >-
+        Built idempotent payment ledgers and reconciliation pipelines.
+      sortOrder: 2
+    - title: Software Engineer, Growth & Monetization
+      date: "2016 — 2019"
+      company: ""
+      description: >-
+        Designed usage metering and invoicing systems.
+      sortOrder: 3

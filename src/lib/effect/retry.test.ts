@@ -64,7 +64,7 @@ describe("ContentService", () => {
 
     const program = Effect.gen(function* () {
       const service = yield* ContentService;
-      return yield* service.readWriteUp("nonexistent");
+      return yield* service.readPost("nonexistent");
     }).pipe(Effect.provide(ContentServiceLive));
 
     const result = await Effect.runPromiseExit(program);
@@ -83,7 +83,7 @@ describe("ContentService", () => {
 
     const program = Effect.gen(function* () {
       const service = yield* ContentService;
-      return yield* service.readWriteUp("designing-an-idempotent-payment-ledger");
+      return yield* service.readPost("designing-an-idempotent-payment-ledger");
     }).pipe(Effect.provide(ContentServiceLive));
 
     const entry = await Effect.runPromise(program);
