@@ -10,20 +10,14 @@ export interface NavLink {
   readonly url: string;
 }
 
-const fallbackLinks: NavLink[] = [
-  { label: "About", url: "/mock/about" },
-  { label: "Writing", url: "/mock/write-up" },
-  { label: "Contact", url: "/mock/contact" },
-];
-
 export function Nav({ links }: { links?: readonly NavLink[] }) {
-  const navLinks = links ?? fallbackLinks;
+  const navLinks = links ?? [];
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <header className="relative flex items-center justify-between border-b border-white/8 px-5 py-4 lg:px-14 lg:py-[22px]">
-      <Link href="/mock/home" className="flex items-center gap-3">
+      <Link href="/" className="flex items-center gap-3">
         <div className="flex h-8 w-8 items-center justify-center rounded-md border border-white/18 font-mono text-xs font-semibold text-primary">
           AM
         </div>

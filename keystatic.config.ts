@@ -243,5 +243,38 @@ export default config({
         ),
       },
     }),
+    writing: singleton({
+      label: "Writing",
+      path: "content/writing/",
+      schema: {
+        title: fields.text({
+          label: "Title",
+          validation: { length: { min: 1 } },
+        }),
+        description: fields.text({
+          label: "Description",
+          multiline: true,
+        }),
+        featuredPost: fields.relationship({
+          label: "Featured Post",
+          collection: "posts",
+          validation: { isRequired: false },
+        }),
+      },
+    }),
+    featureFlags: singleton({
+      label: "Feature Flags",
+      path: "content/feature-flags/",
+      schema: {
+        showWriting: fields.checkbox({
+          label: "Show Writing page",
+          defaultValue: false,
+        }),
+        showContact: fields.checkbox({
+          label: "Show Contact page",
+          defaultValue: false,
+        }),
+      },
+    }),
   },
 });

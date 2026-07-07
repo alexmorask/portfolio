@@ -11,7 +11,7 @@ export default function MockWriteUpPage() {
 
       <div className="px-5 pt-[18px] lg:px-14">
         <Link
-          href="/mock/home"
+          href="/"
           className="font-mono text-xs text-text-faint transition-colors duration-150 hover:text-primary"
         >
           Home
@@ -19,7 +19,7 @@ export default function MockWriteUpPage() {
         <span className="font-mono text-xs text-text-faint"> / </span>
         <span className="hidden lg:inline">
           <Link
-            href="/mock/home#writing"
+            href="/#writing"
             className="font-mono text-xs text-text-faint transition-colors duration-150 hover:text-primary"
           >
             Writing

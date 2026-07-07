@@ -1,82 +1,37 @@
 import { createReader } from "@keystatic/core/reader";
 import { Context, Effect, Layer } from "effect";
+import type { NavLink, Post } from "@/types/content/collections";
+import type {
+  AboutPage,
+  Experience,
+  FeatureFlags,
+  HomePage,
+  WritingPage,
+} from "@/types/content/singletons";
 import keystaticConfig from "../../../keystatic.config";
 import { ContentNotFoundError } from "./errors";
 
 const reader = createReader(process.cwd(), keystaticConfig);
 
-export interface NavLink {
-  readonly label: string;
-  readonly url: string;
-  readonly sortOrder: number | null;
-}
-
-export interface PostContent {
-  readonly slug: string;
-  readonly title: string;
-  readonly summary: string;
-  readonly tags: readonly string[];
-  readonly publishedAt: string | null;
-  readonly body: string;
-}
-
-export interface Experience {
-  readonly title: string;
-  readonly date: string;
-  readonly company: string;
-  readonly description: string;
-  readonly sortOrder: number | null;
-}
-
-export interface HomeContent {
-  readonly hero: {
-    readonly eyebrow: string;
-    readonly heading: string;
-    readonly introParagraph: string;
-    readonly secondaryParagraph: string;
-  };
-  readonly focusAreas: {
-    readonly heading: string;
-    readonly items: readonly string[];
-  };
-  readonly experience: {
-    readonly heading: string;
-    readonly items: readonly Experience[];
-  };
-}
-
-export interface AboutContent {
-  readonly intro: {
-    readonly heading: string;
-    readonly introParagraph: string;
-    readonly secondaryParagraph: string;
-  };
-  readonly background: {
-    readonly body: string;
-  };
-  readonly howIWork: {
-    readonly heading: string;
-    readonly items: readonly string[];
-  };
-  readonly beyondTheLedger: {
-    readonly heading: string;
-    readonly body: string;
-  };
-}
-
 export class ContentService extends Context.Tag("ContentService")<
   ContentService,
   {
     /** Reads a single post by slug. */
-    readonly readPost: (slug: string) => Effect.Effect<PostContent, ContentNotFoundError>;
+    readonly readPost: (slug: string) => Effect.Effect<Post, ContentNotFoundError>;
     /** Lists all posts. */
-    readonly listPosts: () => Effect.Effect<readonly PostContent[], never>;
+    readonly listPosts: () => Effect.Effect<readonly Post[], never>;
     /** Reads the Home page singleton. */
-    readonly readHome: () => Effect.Effect<HomeContent, ContentNotFoundError>;
+    readonly readHome: () => Effect.Effect<HomePage, ContentNotFoundError>;
     /** Reads the About page singleton. */
-    readonly readAbout: () => Effect.Effect<AboutContent, ContentNotFoundError>;
+    readonly readAbout: () => Effect.Effect<AboutPage, ContentNotFoundError>;
     /** Lists all navigation links. */
     readonly listNavLinks: () => Effect.Effect<readonly NavLink[], never>;
+    /** Reads the Writing page singleton. */
+    readonly readWritingPage: () => Effect.Effect<WritingPage, ContentNotFoundError>;
+    /** Lists all tags with their display labels. */
+    readonly listTags: () => Effect.Effect<readonly { slug: string; label: string }[], never>;
+    /** Reads the Feature Flags singleton. */
+    readonly readFeatureFlags: () => Effect.Effect<FeatureFlags, ContentNotFoundError>;
   }
 >() {}
 
@@ -111,8 +66,8 @@ export const ContentServiceLive = Layer.succeed(ContentService, {
         tags: e.entry.tags,
         publishedAt: e.entry.publishedAt,
         body: "",
-      })) as readonly PostContent[];
-    }).pipe(Effect.catchAll(() => Effect.succeed([] as readonly PostContent[]))),
+      })) as readonly Post[];
+    }).pipe(Effect.catchAll(() => Effect.succeed([] as readonly Post[]))),
 
   listNavLinks: () =>
     Effect.tryPromise(async () => {
@@ -188,6 +143,53 @@ export const ContentServiceLive = Layer.succeed(ContentService, {
           heading: data.beyondTheLedger?.heading ?? "BEYOND THE LEDGER",
           body: data.beyondTheLedger?.body ?? "",
         },
+      } as const;
+    }),
+
+  readWritingPage: () =>
+    Effect.gen(function* () {
+      const data = yield* Effect.tryPromise({
+        try: () => reader.singletons.writing?.read(),
+        catch: () => new ContentNotFoundError({ slug: "writing" }),
+      });
+
+      if (!data) {
+        return yield* Effect.fail(new ContentNotFoundError({ slug: "writing" }));
+      }
+
+      return {
+        title: data.title ?? "",
+        description: data.description ?? "",
+        featuredPostSlug: data.featuredPost ?? null,
+      } as const;
+    }),
+
+  listTags: () =>
+    Effect.tryPromise(async () => {
+      const entries = await reader.collections.tags?.all();
+      const tags = (entries ?? []).map((e) => ({
+        slug: e.slug,
+        label: e.entry.label,
+      }));
+      return tags.sort((a, b) => a.label.localeCompare(b.label));
+    }).pipe(
+      Effect.catchAll(() => Effect.succeed([] as readonly { slug: string; label: string }[])),
+    ),
+
+  readFeatureFlags: () =>
+    Effect.gen(function* () {
+      const data = yield* Effect.tryPromise({
+        try: () => reader.singletons.featureFlags?.read(),
+        catch: () => new ContentNotFoundError({ slug: "featureFlags" }),
+      });
+
+      if (!data) {
+        return yield* Effect.fail(new ContentNotFoundError({ slug: "featureFlags" }));
+      }
+
+      return {
+        showWriting: data.showWriting ?? false,
+        showContact: data.showContact ?? false,
       } as const;
     }),
 });
