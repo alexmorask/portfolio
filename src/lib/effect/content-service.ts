@@ -3,6 +3,7 @@ import { Context, Effect, Layer } from "effect";
 import type { NavLink, Post } from "@/types/content/collections";
 import type {
   AboutPage,
+  ContactPage,
   Experience,
   FeatureFlags,
   HomePage,
@@ -32,6 +33,8 @@ export class ContentService extends Context.Tag("ContentService")<
     readonly listTags: () => Effect.Effect<readonly { slug: string; label: string }[], never>;
     /** Reads the Feature Flags singleton. */
     readonly readFeatureFlags: () => Effect.Effect<FeatureFlags, ContentNotFoundError>;
+    /** Reads the Contact page singleton. */
+    readonly readContactPage: () => Effect.Effect<ContactPage, ContentNotFoundError>;
   }
 >() {}
 
@@ -190,6 +193,29 @@ export const ContentServiceLive = Layer.succeed(ContentService, {
       return {
         showWriting: data.showWriting ?? false,
         showContact: data.showContact ?? false,
+      } as const;
+    }),
+
+  readContactPage: () =>
+    Effect.gen(function* () {
+      const data = yield* Effect.tryPromise({
+        try: () => reader.singletons.contact?.read(),
+        catch: () => new ContentNotFoundError({ slug: "contact" }),
+      });
+
+      if (!data) {
+        return yield* Effect.fail(new ContentNotFoundError({ slug: "contact" }));
+      }
+
+      return {
+        eyebrow: data.eyebrow ?? "05 / CONTACT",
+        heading: data.heading ?? "",
+        description: data.description ?? "",
+        availabilityLabel: data.availabilityLabel ?? "",
+        email: data.email ?? "",
+        github: data.github ?? "",
+        linkedin: data.linkedin ?? "",
+        location: data.location ?? "",
       } as const;
     }),
 });

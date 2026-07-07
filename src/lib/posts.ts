@@ -11,3 +11,7 @@ export function formatDate(dateString: string | null): string {
   const date = new Date(dateString);
   return date.toLocaleDateString("en-US", { year: "numeric", month: "long" });
 }
+
+export function tagLabel(slug: string): string {
+  return slug.replace(/-/g, " ");
+}

@@ -52,3 +52,14 @@ export interface FeatureFlags {
   readonly showWriting: boolean;
   readonly showContact: boolean;
 }
+
+export interface ContactPage {
+  readonly eyebrow: string;
+  readonly heading: string;
+  readonly description: string;
+  readonly availabilityLabel: string;
+  readonly email: string;
+  readonly github: string;
+  readonly linkedin: string;
+  readonly location: string;
+}

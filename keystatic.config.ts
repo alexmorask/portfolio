@@ -276,5 +276,39 @@ export default config({
         }),
       },
     }),
+    contact: singleton({
+      label: "Contact",
+      path: "content/contact/",
+      schema: {
+        eyebrow: fields.text({
+          label: "Eyebrow",
+          defaultValue: "05 / CONTACT",
+        }),
+        heading: fields.text({
+          label: "Heading",
+        }),
+        description: fields.text({
+          label: "Description",
+          multiline: true,
+        }),
+        availabilityLabel: fields.text({
+          label: "Availability Badge",
+          defaultValue: "OPEN TO CONSULTING",
+        }),
+        email: fields.text({
+          label: "Email",
+        }),
+        github: fields.text({
+          label: "GitHub URL",
+        }),
+        linkedin: fields.text({
+          label: "LinkedIn URL",
+        }),
+        location: fields.text({
+          label: "Location",
+          defaultValue: "Remote",
+        }),
+      },
+    }),
   },
 });
