@@ -1,34 +1,44 @@
 intro:
   heading: "Hi, I'm Alex."
   introParagraph: >-
-    I'm a staff software engineer who's spent the last decade inside the parts
-    of the stack most engineers avoid: billing engines, payment ledgers, and
-    the pricing logic that decides what customers actually owe.
+    I'm a staff software engineer who's spent the past half decade inside the
+    parts of the stack most engineers avoid: billing, payments, and pricing
+    systems that determine what customers actually owe and how they're going to
+    pay.
   secondaryParagraph: >-
-    I started out building CRUD apps like everyone else, but a production
-    incident involving a double-charged customer changed my trajectory — I've
-    been obsessed with correctness in money-moving systems ever since.
+    I didn't set out to specialize in this corner of engineering — I started
+    out building CRUD apps like everyone else. But after landing a role on an
+    international remittance platform, the problems there turned out to be
+    exactly the kind of hard, unglamorous work I wanted to keep doing.
 background:
   body: >-
-    My career has followed the money — literally. I've built billing platforms
-    for a B2B SaaS company scaling into enterprise contracts, rebuilt the
-    payment ledger for a global marketplace processing billions in annual
-    volume, and now lead the re-architecture of a fintech's core billing engine
-    as it expands into hybrid usage and subscription pricing.
+    My career has followed the money — literally, across international money
+    transfers, restaurant ordering, and password management. The shape of the
+    work has stayed consistent: architecting and delivering scalable payment
+    systems, migrating critical infrastructure without breaking what's
+    running, and building event-driven integrations that reconcile cash flows and reporting.
 
-    What keeps me in this corner of engineering is the stakes: get a payments
-    system wrong and it's not a bad UX, it's a customer's money. That
-    constraint makes for some of the most interesting distributed-systems
-    problems I've come across — idempotency, reconciliation, exactly-once
-    semantics in a world where "exactly once" is a polite fiction.
+    What keeps me doing this work is the stakes: get a payments system wrong
+    and it's not just bad UX or a missed opportunity, it's a customer's real
+    money. That constraint makes for some of the most interesting
+    distributed-systems problems I've come across — idempotency,
+    reconciliation, and exactly-once semantics in a world where "exactly once"
+    is rarely a reality.
 howIWork:
   heading: "03 / HOW I WORK"
   items:
     - text: "Correctness first — in billing, a fast wrong answer is worse than a slow right one."
-    - text: "Design for retries and failure from day one — networks drop packets, and your ledger has to assume they will."
-    - text: "Write it down — the write-ups on this site are the same docs I'd hand a new hire on day one."
+    - text: "Design for retries and failure from day one — networks drop packets, and your system has to assume they will."
+    - text: "Translate decisions into systems — pricing and monetization decisions come from leadership; my job is building the system that enforces them correctly, every time."
+    - text: "Build platforms, not point solutions — a one-off integration that solves today's problem is next year's technical debt; I design for the next consumer before they show up."
+    - text: "Migrate like rollback is inevitable — dry-run validation and a rollback path aren't optional extras on a migration; they're the actual deliverable."
+    - text: "Mentorship is part of the job, not overhead — code reviews and technical breakdowns with more junior engineers are deliverables too, not distractions from the real work."
 beyondTheLedger:
-  heading: "04 / BEYOND THE LEDGER"
+  heading: "04 / BEYOND BILLING"
   body: >-
-    Outside of work I'm usually rock climbing, tinkering with home espresso,
-    or arguing that the CAP theorem applies to more of life than it should.
+    Outside of work, most of my time goes to Olympic weightlifting — I train
+    five days a week and compete in local meets. Beyond that, I'm usually
+    trying to make the most of Chicago: catching concerts, checking out new
+    restaurants, wandering street festivals, or riding my bike around the
+    city. When I'm not doing any of that, I'm reading history or spending time
+    with friends and family.

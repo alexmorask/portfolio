@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { SectionEyebrow } from "@/components/layout/section-eyebrow";
 
 export function IntroSection({
@@ -21,42 +22,14 @@ export function IntroSection({
       </div>
 
       <div className="overflow-hidden rounded-[10px] border border-white/10 bg-card">
-        <svg viewBox="0 0 480 560" className="block h-auto w-full">
-          <title>Photo placeholder</title>
-          <defs>
-            <pattern
-              id="stripeAbout"
-              width="14"
-              height="14"
-              patternTransform="rotate(45)"
-              patternUnits="userSpaceOnUse"
-            >
-              <rect width="14" height="14" fill="#0e1117" />
-              <rect width="7" height="14" fill="rgba(255,255,255,.045)" />
-            </pattern>
-          </defs>
-          <rect width="480" height="560" fill="url(#stripeAbout)" />
-          <text
-            x="240"
-            y="270"
-            textAnchor="middle"
-            fill="#7a8494"
-            fontFamily="IBM Plex Mono, monospace"
-            fontSize="13"
-          >
-            PHOTO PLACEHOLDER
-          </text>
-          <text
-            x="240"
-            y="292"
-            textAnchor="middle"
-            fill="#545c6b"
-            fontFamily="IBM Plex Mono, monospace"
-            fontSize="11"
-          >
-            drop headshot here — 4:5 ratio
-          </text>
-        </svg>
+        <Image
+          src="/images/headshot.jpg"
+          alt="Alex Morask"
+          width={2048}
+          height={1367}
+          className="block h-auto w-full"
+          priority
+        />
       </div>
     </section>
   );
