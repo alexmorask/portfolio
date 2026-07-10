@@ -47,7 +47,7 @@ export function Nav({ links }: { links?: readonly NavLink[] }) {
       <button
         type="button"
         onClick={() => setMobileOpen(!mobileOpen)}
-        className="flex flex-col gap-1 p-1.5 lg:hidden"
+        className="flex flex-col gap-1 p-1.5 lg:hidden cursor-pointer"
         aria-label="Menu"
       >
         <span className="block h-0.5 w-[18px] bg-text-tertiary" />

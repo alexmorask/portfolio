@@ -1,5 +1,4 @@
 import { Effect } from "effect";
-import Link from "next/link";
 import { BackgroundSection } from "@/components/about/background-section";
 import { BeyondTheLedgerSection } from "@/components/about/beyond-the-ledger-section";
 import { HowIWorkSection } from "@/components/about/how-i-work-section";
@@ -69,16 +68,7 @@ export default async function About() {
         body={about.beyondTheLedger.body}
       />
 
-      <Footer>
-        {flags.showContact && (
-          <Link
-            href="/contact"
-            className="font-mono text-[13px] font-semibold text-primary transition-colors duration-150 hover:text-foreground"
-          >
-            Get in touch &rarr;
-          </Link>
-        )}
-      </Footer>
+      <Footer showContact={flags.showContact} />
     </SiteContainer>
   );
 }

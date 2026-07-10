@@ -24,6 +24,10 @@ export async function submitContactForm(
     return { success: false, error: "Name, email, and message are required." };
   }
 
+  if (formData.get("website")) {
+    return { success: true };
+  }
+
   const input: EmailInput = { name, email, message };
   if (company) {
     input.company = company;

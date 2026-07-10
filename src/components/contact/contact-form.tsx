@@ -13,6 +13,14 @@ export function ContactForm() {
       action={formAction}
       className="flex flex-col gap-[22px] rounded-[10px] border border-white/10 bg-card p-6 lg:p-9"
     >
+      <input
+        type="text"
+        name="website"
+        tabIndex={-1}
+        autoComplete="off"
+        className="absolute opacity-0 pointer-events-none"
+        style={{ left: "-9999px", position: "absolute" }}
+      />
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         <div className="flex flex-col gap-2">
           <label
@@ -91,7 +99,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="rounded-md bg-primary px-[22px] py-3.5 font-sans text-sm font-semibold text-primary-foreground transition-all hover:brightness-110 hover:-translate-y-px disabled:opacity-50"
+        className="rounded-md bg-primary px-[22px] py-3.5 font-sans text-sm font-semibold text-primary-foreground transition-all cursor-pointer hover:brightness-110 hover:-translate-y-px disabled:opacity-50"
       >
         {isPending ? "Sending…" : "Send message"}
       </button>

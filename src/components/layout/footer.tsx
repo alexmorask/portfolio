@@ -1,14 +1,39 @@
+import Link from "next/link";
+
 interface FooterProps {
-  children?: React.ReactNode;
+  readonly showContact?: boolean;
 }
 
-export function Footer({ children }: FooterProps) {
+export function Footer({ showContact = false }: FooterProps) {
   return (
     <footer className="flex items-center justify-between border-t border-white/8 px-5 py-6 lg:px-14 lg:py-8">
       <span className="font-mono text-xs text-text-faint">
-        &copy; 2026 Alex Morask &middot; Remote
+        &copy; 2026 Alex Morask &middot; Chicago, IL
       </span>
-      {children}
+
+      <div className="flex flex-col items-end gap-[10px] lg:flex-row lg:gap-6">
+        <Link
+          href="https://github.com/alexmorask"
+          className="font-mono text-xs font-medium text-text-tertiary transition-colors duration-150 hover:text-primary"
+        >
+          github.com/alexmorask
+        </Link>
+        <Link
+          href="https://linkedin.com/in/alexmorask"
+          className="font-mono text-xs font-medium text-text-tertiary transition-colors duration-150 hover:text-primary"
+        >
+          linkedin.com/in/alexmorask
+        </Link>
+
+        {showContact && (
+          <Link
+            href="/contact"
+            className="font-mono text-xs font-semibold text-primary transition-colors duration-150 hover:text-foreground"
+          >
+            Get in touch &rarr;
+          </Link>
+        )}
+      </div>
     </footer>
   );
 }

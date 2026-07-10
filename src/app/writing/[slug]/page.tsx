@@ -63,7 +63,7 @@ export default async function Post({ params }: Props) {
         </article>
       </div>
 
-      <Footer />
+      <Footer showContact={flags.showContact} />
     </SiteContainer>
   );
 }

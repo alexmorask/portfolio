@@ -25,8 +25,8 @@ export const EmailServiceLive = Layer.succeed(EmailService, {
       yield* Effect.tryPromise({
         try: () =>
           resend.emails.send({
-            from: "contact@alexmorask.com",
-            to: "alex@alexmorask.com",
+            from: "contact@alexmorask.dev",
+            to: "alex@alexmorask.dev",
             replyTo: input.email,
             subject: `Portfolio contact: ${input.name}`,
             html: `

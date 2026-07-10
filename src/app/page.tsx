@@ -1,5 +1,4 @@
 import { Effect } from "effect";
-import Link from "next/link";
 import { ExperienceTimeline } from "@/components/home/experience-timeline";
 import { FocusAreas } from "@/components/home/focus-areas";
 import { HeroSection } from "@/components/home/hero-section";
@@ -69,28 +68,7 @@ export default async function Home() {
 
       {latestPost && flags.showWriting && <LatestPostCard post={latestPost} />}
 
-      <Footer>
-        <div className="flex flex-col gap-[10px] lg:flex-row lg:gap-6">
-          <Link
-            href="mailto:alex@alexmorask.com"
-            className="font-mono text-xs font-medium text-text-tertiary transition-colors duration-150 hover:text-primary"
-          >
-            alex@alexmorask.com
-          </Link>
-          <Link
-            href="https://github.com/alexmorask"
-            className="font-mono text-xs font-medium text-text-tertiary transition-colors duration-150 hover:text-primary"
-          >
-            github.com/alexmorask
-          </Link>
-          <Link
-            href="https://linkedin.com/in/alexmorask"
-            className="font-mono text-xs font-medium text-text-tertiary transition-colors duration-150 hover:text-primary"
-          >
-            linkedin.com/in/alexmorask
-          </Link>
-        </div>
-      </Footer>
+      <Footer showContact={flags.showContact} />
     </SiteContainer>
   );
 }

@@ -1,5 +1,4 @@
 import { Effect } from "effect";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Footer } from "@/components/layout/footer";
 import { Nav } from "@/components/layout/nav";
@@ -73,16 +72,7 @@ export default async function Writing() {
 
       <FilteredPostList posts={listPosts} featuredPost={featuredPost} allTags={allTags} />
 
-      <Footer>
-        {flags.showContact && (
-          <Link
-            href="/contact"
-            className="font-mono text-[13px] font-semibold text-primary transition-colors duration-150 hover:text-foreground"
-          >
-            Get in touch &rarr;
-          </Link>
-        )}
-      </Footer>
+      <Footer showContact={flags.showContact} />
     </SiteContainer>
   );
 }

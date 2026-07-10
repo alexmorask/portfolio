@@ -95,7 +95,7 @@ export default async function Contact() {
               </Link>
             )}
             {contactPage.location && (
-              <span className="mt-2 font-mono text-[13px] text-text-faint">
+              <span className="mt-2 font-mono text-[13px] text-text-tertiary">
                 {contactPage.location}
               </span>
             )}
