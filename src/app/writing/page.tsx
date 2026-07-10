@@ -32,7 +32,7 @@ export default async function Writing() {
       ]);
 
       const writingPage = yield* service
-        .readWritingPage()
+        .readWriting()
         .pipe(Effect.catchAll(() => Effect.succeed(fallbackWritingPage())));
 
       return { writingPage, posts, allTags, navLinks, flags };

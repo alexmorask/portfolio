@@ -1,50 +1,78 @@
 hero:
-  eyebrow: "STAFF SOFTWARE ENGINEER — BILLING, PAYMENTS & MONETIZATION"
+  eyebrow: "STAFF SOFTWARE ENGINEER — BILLING & PAYMENTS"
   heading: "Alex Morask"
   introParagraph: >-
-    I design and build the systems that move money — billing engines, payment
-    infrastructure, and monetization platforms that scale to millions of
-    transactions.
+    I design and build the systems that keep my company paid — billing
+    platforms, pricing engines, and monetization systems that provide
+    flexibility, extensibility, and correctness at scale.
   secondaryParagraph: >-
-    Over the past decade I've led billing and payments platforms at
-    high-growth fintech and marketplace companies — from idempotent ledger
-    design to usage-based pricing engines processing billions in GMV. I write
-    about the hard, unglamorous problems in payment systems: reconciliation,
-    correctness under failure, and pricing models that scale.
+    Over the past half decade, I've built billing and payments platforms at
+    companies spanning fintech, marketplaces, and SaaS. Wherever I've worked in
+    this space, I've always focused on the same things: correctness under
+    failure — reconciling state when networks drop or providers retry — and
+    building for scale as a platform, not a one-off solution. This is where
+    I'll be writing through these problems as I hit them.
 focusAreas:
   heading: "01 / FOCUS AREAS"
   items:
     - text: Billing Systems
       sortOrder: 1
-    - text: Payment Infrastructure
+    - text: Payment Integrations
       sortOrder: 2
-    - text: Monetization Strategy
+    - text: Pricing Engines
       sortOrder: 3
-    - text: Usage-Based Pricing
+    - text: Correctness Under Failure
       sortOrder: 4
-    - text: Ledger & Reconciliation
+    - text: Distributed System Design
       sortOrder: 5
-    - text: Distributed Systems Design
+    - text: Event-Driven Architecture
       sortOrder: 6
 experience:
   heading: "02 / EXPERIENCE"
   items:
-    - title: Staff Software Engineer, Billing Platform
-      date: "2022 — Present"
+    - title: Staff Software Engineer, Billing
+      date: "2023 — Present"
       company: Bitwarden
+      companyUrl: "https://bitwarden.com"
       description: >-
-        Leading the billing and monetization infrastructure for an open-source
-        security platform serving millions of users.
+        Leading billing platform engineering for an open-source security
+        platform serving millions of users.
       sortOrder: 1
-    - title: Senior Software Engineer, Payments Infrastructure
-      date: "2019 — 2022"
-      company: ""
+    - title: Senior Software Engineer II, Loyalty → Payments
+      date: "2021 — 2023"
+      company: Olo
+      companyUrl: "https://www.olo.com"
       description: >-
-        Built idempotent payment ledgers and reconciliation pipelines.
+        Built event-driven payments and reconciliation infrastructure for a
+        restaurant technology platform.
       sortOrder: 2
-    - title: Software Engineer, Growth & Monetization
-      date: "2016 — 2019"
-      company: ""
+    - title: Consultant
+      date: "2021"
+      company: Slalom
+      companyUrl: "https://www.slalom.com"
       description: >-
-        Designed usage metering and invoicing systems.
+        Built the backend for a greenfield, event-driven API supporting food
+        banks nationwide.
       sortOrder: 3
+    - title: Software Engineer II
+      date: "2020 — 2021"
+      company: Rally Health (UnitedHealthcare)
+      description: >-
+        Delivered claims features for a large-scale healthcare platform.
+      sortOrder: 4
+    - title: Senior Software Engineer
+      date: "2018 — 2020"
+      company: Pangea Money Transfer
+      companyUrl: "https://www.pangeamoneytransfer.com"
+      description: >-
+        Built multi-rail payment and Banking-as-a-Service integrations
+        facilitating international remittances.
+      sortOrder: 5
+    - title: Developer
+      date: "2016 — 2018"
+      company: One North Interactive
+      companyUrl: "https://www.onenorth.com"
+      description: >-
+        Delivered CMS implementations and data migrations for national law and
+        consulting firms.
+      sortOrder: 6

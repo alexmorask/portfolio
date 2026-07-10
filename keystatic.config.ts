@@ -149,6 +149,10 @@ export default config({
                 title: fields.text({ label: "Title" }),
                 date: fields.text({ label: "Date" }),
                 company: fields.text({ label: "Company" }),
+                companyUrl: fields.url({
+                  label: "Company URL",
+                  validation: { isRequired: false },
+                }),
                 description: fields.text({
                   label: "Description",
                   multiline: true,

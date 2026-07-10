@@ -2,6 +2,7 @@ export interface Experience {
   readonly title: string;
   readonly date: string;
   readonly company: string;
+  readonly companyUrl: string | null;
   readonly description: string;
   readonly sortOrder: number | null;
 }

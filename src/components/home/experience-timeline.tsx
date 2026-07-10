@@ -29,9 +29,20 @@ export function ExperienceTimeline({
                 <div className="mb-1 font-sans text-[15px] font-semibold text-foreground lg:mb-1 lg:text-base">
                   {item.title}
                 </div>
-                <div className="mb-0 font-mono text-xs font-medium text-text-faint lg:mb-[10px] lg:text-[13px]">
-                  {item.company}
-                </div>
+                {item.companyUrl ? (
+                  <a
+                    href={item.companyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-xs font-medium text-text-tertiary transition-colors duration-150 hover:text-primary lg:text-[13px]"
+                  >
+                    {item.company}
+                  </a>
+                ) : (
+                  <div className="mb-0 font-mono text-xs font-medium text-text-faint lg:mb-[10px] lg:text-[13px]">
+                    {item.company}
+                  </div>
+                )}
                 {item.description && (
                   <div className="hidden font-sans text-sm leading-relaxed text-text-tertiary lg:block lg:max-w-[640px]">
                     {item.description}

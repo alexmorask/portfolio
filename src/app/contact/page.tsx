@@ -33,9 +33,7 @@ export default async function Contact() {
         service
           .readFeatureFlags()
           .pipe(Effect.catchAll(() => Effect.succeed({ showWriting: false, showContact: false }))),
-        service
-          .readContactPage()
-          .pipe(Effect.catchAll(() => Effect.succeed(fallbackContactPage()))),
+        service.readContact().pipe(Effect.catchAll(() => Effect.succeed(fallbackContactPage()))),
       ]);
 
       return { contactPage, navLinks, flags };
