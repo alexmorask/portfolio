@@ -17,7 +17,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   title: "Alex Morask",
-  description: "Staff Software Engineer — Billing, Payments, and Monetization",
+  description: "Staff Software Engineer — Billing & Payments",
 };
 
 export default function RootLayout({
