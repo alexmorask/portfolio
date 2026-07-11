@@ -56,7 +56,7 @@ export function Nav({ links }: { links?: readonly NavLink[] }) {
       </button>
 
       {mobileOpen && (
-        <nav className="absolute left-0 right-0 top-full z-50 flex flex-col gap-4 border-b border-white/8 bg-card px-5 py-6 lg:hidden">
+        <nav className="absolute left-0 right-0 top-full z-50 flex flex-col gap-6 border-b border-white/8 bg-card px-5 py-8 lg:hidden">
           {navLinks.map((link) => {
             const isActive = pathname === link.url;
             return (
@@ -65,7 +65,7 @@ export function Nav({ links }: { links?: readonly NavLink[] }) {
                 href={link.url}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  "font-mono text-xs font-medium uppercase tracking-wider",
+                  "font-mono text-base font-medium uppercase tracking-wider py-1",
                   isActive ? "text-primary" : "text-text-tertiary",
                 )}
               >

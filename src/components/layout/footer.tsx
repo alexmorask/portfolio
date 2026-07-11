@@ -6,12 +6,12 @@ interface FooterProps {
 
 export function Footer({ showContact = false }: FooterProps) {
   return (
-    <footer className="flex items-center justify-between border-t border-white/8 px-5 py-6 lg:px-14 lg:py-8">
-      <span className="font-mono text-xs text-text-faint">
+    <footer className="flex flex-col items-center gap-3 border-t border-white/8 px-5 py-6 lg:flex-row lg:items-center lg:justify-between lg:px-14 lg:py-8">
+      <span className="text-center font-mono text-xs text-text-faint">
         &copy; 2026 Alex Morask &middot; Chicago, IL
       </span>
 
-      <div className="flex flex-col items-end gap-[10px] lg:flex-row lg:gap-6">
+      <div className="flex flex-col items-center gap-[10px] lg:flex-row lg:items-center lg:gap-6">
         <Link
           href="https://github.com/alexmorask"
           className="font-mono text-xs font-medium text-text-tertiary transition-colors duration-150 hover:text-primary"
