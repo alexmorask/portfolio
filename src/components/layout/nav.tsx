@@ -22,7 +22,7 @@ export function Nav({ links }: { links?: readonly NavLink[] }) {
           AM
         </div>
         <span className="font-mono text-[13px] font-medium tracking-tight text-foreground">
-          alexmorask.com
+          alexmorask.dev
         </span>
       </Link>
 
