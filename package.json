@@ -28,7 +28,6 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.2",
-    "@rolldown/binding-darwin-arm64": "^1.1.4",
     "@tailwindcss/postcss": "^4.3.2",
     "@types/node": "^26.1.0",
     "@types/react": "^19.2.17",

@@ -69,9 +69,6 @@ importers:
       '@biomejs/biome':
         specifier: ^2.5.2
         version: 2.5.2
-      '@rolldown/binding-darwin-arm64':
-        specifier: ^1.1.4
-        version: 1.1.4
       '@tailwindcss/postcss':
         specifier: ^4.3.2
         version: 4.3.2
@@ -1363,6 +1360,7 @@ packages:
   '@rolldown/binding-darwin-arm64@1.1.4':
     resolution: {integrity: sha512-aUi+HBvmYb7j8krl1+qJgkG8C17fO79gk3c+jPw4S8glRFc1DTija9S3EyaTSQUm5GJXYKDAsugBEhFHH2vYiQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
     os: [darwin]
 
   '@rolldown/binding-darwin-x64@1.1.4':
@@ -5526,7 +5524,8 @@ snapshots:
   '@rolldown/binding-android-arm64@1.1.4':
     optional: true
 
-  '@rolldown/binding-darwin-arm64@1.1.4': {}
+  '@rolldown/binding-darwin-arm64@1.1.4':
+    optional: true
 
   '@rolldown/binding-darwin-x64@1.1.4':
     optional: true
