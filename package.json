@@ -14,6 +14,21 @@
     "node": "20.17.0",
     "pnpm": "9.10.0"
   },
+  "pnpm": {
+    "supportedArchitectures": {
+      "os": [
+        "darwin",
+        "linux"
+      ],
+      "cpu": [
+        "arm64",
+        "x64"
+      ],
+      "libc": [
+        "glibc"
+      ]
+    }
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
