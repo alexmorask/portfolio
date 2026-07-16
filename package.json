@@ -8,26 +8,11 @@
   "description": "Personal portfolio and system design write-ups — alexmorask.com",
   "packageManager": "pnpm@9.10.0",
   "engines": {
-    "node": ">=20.17.0"
+    "node": ">=20.19.0"
   },
   "volta": {
-    "node": "20.17.0",
+    "node": "20.19.0",
     "pnpm": "9.10.0"
-  },
-  "pnpm": {
-    "supportedArchitectures": {
-      "os": [
-        "darwin",
-        "linux"
-      ],
-      "cpu": [
-        "arm64",
-        "x64"
-      ],
-      "libc": [
-        "glibc"
-      ]
-    }
   },
   "scripts": {
     "dev": "next dev",
