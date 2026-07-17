@@ -1,13 +1,16 @@
 import { collection, config, fields, singleton } from "@keystatic/core";
 
 export default config({
-  storage: {
-    kind: "github",
-    repo: {
-      owner: "alexmorask",
-      name: "portfolio",
-    },
-  },
+  storage:
+    process.env.KEYSTATIC_STORAGE === "github"
+      ? {
+          kind: "github",
+          repo: {
+            owner: "alexmorask",
+            name: "portfolio",
+          },
+        }
+      : { kind: "local" },
   collections: {
     tags: collection({
       label: "Tags",
