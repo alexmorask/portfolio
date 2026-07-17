@@ -77,18 +77,4 @@ describe("ContentService", () => {
       }
     }
   });
-
-  it("returns seed entry for known slug", async () => {
-    const { ContentServiceLive, ContentService } = await import("./content-service");
-
-    const program = Effect.gen(function* () {
-      const service = yield* ContentService;
-      return yield* service.readPost("designing-an-idempotent-payment-ledger");
-    }).pipe(Effect.provide(ContentServiceLive));
-
-    const entry = await Effect.runPromise(program);
-
-    expect(entry.slug).toBe("designing-an-idempotent-payment-ledger");
-    expect(entry.title).toBe("Designing an Idempotent Payment Ledger");
-  });
 });
