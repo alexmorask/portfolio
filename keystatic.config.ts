@@ -1,8 +1,11 @@
 import { collection, config, fields, singleton } from "@keystatic/core";
 
+const keystaticStorage = process.env.KEYSTATIC_STORAGE;
+console.log("[keystatic] KEYSTATIC_STORAGE =", JSON.stringify(keystaticStorage));
+
 export default config({
   storage:
-    process.env.KEYSTATIC_STORAGE === "github"
+    keystaticStorage === "github"
       ? {
           kind: "github",
           repo: {
