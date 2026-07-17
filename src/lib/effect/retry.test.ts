@@ -89,6 +89,9 @@ describe("ContentService", () => {
     const entry = await Effect.runPromise(program);
 
     expect(entry.slug).toBe("designing-an-idempotent-payment-ledger");
-    expect(entry.title).toBe("Designing an Idempotent Payment Ledger");
+    expect(entry.title).toBe("designing-an-idempotent-payment-ledger");
+    expect(entry.summary).toBe(
+      "How to design a payment ledger that guarantees exactly-once processing.",
+    );
   });
 });
