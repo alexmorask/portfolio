@@ -1,10 +1,17 @@
-import { Layer } from "effect";
+import { Config, Effect, Layer } from "effect";
 import { ContentServiceLive } from "./content-service";
-import { EmailServiceLive } from "./email-service";
+import { EmailServiceLive, EmailServiceLocal } from "./email-service";
 
-/**
- * Merge all Live layers into one. Call sites provide this to their Effects:
- *
- *   Effect.runPromise(program.pipe(Effect.provide(MainLive)))
- */
-export const MainLive = Layer.merge(ContentServiceLive, EmailServiceLive);
+const emailProvider = Config.literal(
+  "local",
+  "live",
+)("EMAIL_PROVIDER").pipe(Config.withDefault("live" as const));
+
+const EmailLayer = Layer.unwrapEffect(
+  Effect.gen(function* () {
+    const provider = yield* emailProvider;
+    return provider === "local" ? EmailServiceLocal : EmailServiceLive;
+  }),
+);
+
+export const MainLive = Layer.merge(ContentServiceLive, EmailLayer);
