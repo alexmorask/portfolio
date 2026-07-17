@@ -1,7 +1,6 @@
 import { collection, config, fields, singleton } from "@keystatic/core";
 
-const keystaticStorage = process.env.KEYSTATIC_STORAGE;
-console.log("[keystatic] KEYSTATIC_STORAGE =", JSON.stringify(keystaticStorage));
+const keystaticStorage = process.env.NEXT_PUBLIC_KEYSTATIC_STORAGE;
 
 export default config({
   storage:
