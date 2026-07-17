@@ -43,10 +43,7 @@ export const EmailServiceLocal = Layer.succeed(EmailService, {
             `,
           }),
         catch: (error) => new EmailSendError({ cause: error }),
-      }).pipe(
-        Effect.tapError((error) => Effect.logError("SMTP send failed", error.cause)),
-        Effect.retry(retryPolicy),
-      );
+      }).pipe(Effect.retry(retryPolicy));
     }),
 });
 
@@ -71,9 +68,6 @@ export const EmailServiceLive = Layer.succeed(EmailService, {
             `,
           }),
         catch: (error) => new EmailSendError({ cause: error }),
-      }).pipe(
-        Effect.tapError((error) => Effect.logError("Resend send failed", error.cause)),
-        Effect.retry(retryPolicy),
-      );
+      }).pipe(Effect.retry(retryPolicy));
     }),
 });

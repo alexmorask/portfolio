@@ -1,6 +1,6 @@
 "use server";
 
-import { Effect, Layer, Logger } from "effect";
+import { Effect } from "effect";
 import type { EmailInput } from "@/lib/effect/email-service";
 import { EmailService } from "@/lib/effect/email-service";
 import { EmailSendError } from "@/lib/effect/errors";
@@ -36,11 +36,7 @@ export async function submitContactForm(
   const program = Effect.gen(function* () {
     const emailService = yield* EmailService;
     yield* emailService.send(input);
-  }).pipe(
-    Effect.annotateLogs({ email: input.email, name: input.name }),
-    Effect.provide(MainLive),
-    Effect.provide(Logger.json),
-  );
+  }).pipe(Effect.provide(MainLive));
 
   const result = await Effect.runPromiseExit(program);
 
