@@ -77,4 +77,18 @@ describe("ContentService", () => {
       }
     }
   });
+
+  it("returns the real first post for a known slug", async () => {
+    const { ContentServiceLive, ContentService } = await import("./content-service");
+
+    const program = Effect.gen(function* () {
+      const service = yield* ContentService;
+      return yield* service.readPost("idempotency-keys-where-the-boundary-actually-goes");
+    }).pipe(Effect.provide(ContentServiceLive));
+
+    const entry = await Effect.runPromise(program);
+
+    expect(entry.slug).toBe("idempotency-keys-where-the-boundary-actually-goes");
+    expect(entry.title).toBe("Idempotency Keys: Where the Boundary Actually Goes");
+  });
 });

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { calculateReadTime } from "@/lib/posts";
 import type { Post } from "@/types/content/collections";
@@ -69,7 +70,17 @@ export function FeaturedPostCard({ post, dateLabel }: { post: Post; dateLabel: s
             Read the post &rarr;
           </div>
         </div>
-        <FeaturedDiagramPlaceholder />
+        {post.cardImage ? (
+          <Image
+            src={post.cardImage}
+            alt=""
+            width={400}
+            height={320}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <FeaturedDiagramPlaceholder />
+        )}
       </Link>
     </div>
   );

@@ -1,15 +1,15 @@
 import { Effect } from "effect";
-import { notFound } from "next/navigation";
 import { Footer } from "@/components/layout/footer";
 import { Nav } from "@/components/layout/nav";
 import { SiteContainer } from "@/components/layout/site-container";
 import { FilteredPostList } from "@/components/writing/filtered-post-list";
+import { WritingHeroSection } from "@/components/writing/writing-hero-section";
 import { ContentService, ContentServiceLive } from "@/lib/effect/content-service";
-import { buildNavLinks } from "@/lib/nav";
 import type { WritingPage } from "@/types/content/singletons";
 
 function fallbackWritingPage(): WritingPage {
   return {
+    eyebrow: "WRITING",
     title: "Writing",
     description: "",
     featuredPostSlug: null,
@@ -21,28 +21,21 @@ export default async function Writing() {
     Effect.gen(function* () {
       const service = yield* ContentService;
 
-      const [navLinks, posts, allTags, flags] = yield* Effect.all([
+      const [navLinks, posts, allTags] = yield* Effect.all([
         service.listNavLinks(),
         service.listPosts(),
         service.listTags(),
-        service
-          .readFeatureFlags()
-          .pipe(Effect.catchAll(() => Effect.succeed({ showWriting: false, showContact: false }))),
       ]);
 
       const writingPage = yield* service
         .readWriting()
         .pipe(Effect.catchAll(() => Effect.succeed(fallbackWritingPage())));
 
-      return { writingPage, posts, allTags, navLinks, flags };
+      return { writingPage, posts, allTags, navLinks };
     }).pipe(Effect.provide(ContentServiceLive)),
   );
 
-  const { writingPage, posts, allTags, navLinks, flags } = data;
-
-  if (!flags.showWriting) {
-    notFound();
-  }
+  const { writingPage, posts, allTags, navLinks } = data;
 
   const publishedPosts = posts.filter((p) => p.publishedAt);
 
@@ -56,23 +49,13 @@ export default async function Writing() {
 
   return (
     <SiteContainer>
-      <Nav links={buildNavLinks(navLinks, flags)} />
+      <Nav links={navLinks} />
 
-      <section className="px-5 py-8 lg:px-14 lg:py-14">
-        <div className="mb-[18px] font-mono text-xs font-medium tracking-[0.1em] text-primary">
-          WRITING
-        </div>
-        <h1 className="mb-4 font-sans text-4xl font-bold leading-[1.15] tracking-tight lg:text-[44px]">
-          {writingPage.title}
-        </h1>
-        <p className="max-w-[640px] text-base leading-[1.6] text-[#9aa3b2]">
-          {writingPage.description}
-        </p>
-      </section>
+      <WritingHeroSection writingPage={writingPage} />
 
       <FilteredPostList posts={listPosts} featuredPost={featuredPost} allTags={allTags} />
 
-      <Footer showContact={flags.showContact} />
+      <Footer />
     </SiteContainer>
   );
 }

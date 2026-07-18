@@ -1,4 +1,3 @@
-title: "Notes on billing, payments & monetization"
-description: >-
-  Long-form write-ups on the systems that move money — ledger design,
-  reconciliation, pricing, and the failure modes in between.
+eyebrow: WRITING
+title: Notes on engineering, billing & payments
+description: Long-form write-ups on distributed systems that move money.

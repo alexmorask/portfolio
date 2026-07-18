@@ -5,7 +5,6 @@ import type {
   AboutPage,
   ContactPage,
   Experience,
-  FeatureFlags,
   HomePage,
   WritingPage,
 } from "@/types/content/singletons";
@@ -24,8 +23,6 @@ export class ContentService extends Context.Tag("ContentService")<
     readonly readAbout: () => Effect.Effect<AboutPage, ContentError>;
     /** Reads the Contact page singleton. */
     readonly readContact: () => Effect.Effect<ContactPage, ContentError>;
-    /** Reads the Feature Flags singleton. */
-    readonly readFeatureFlags: () => Effect.Effect<FeatureFlags, ContentError>;
     /** Reads the Home page singleton. */
     readonly readHome: () => Effect.Effect<HomePage, ContentError>;
     /** Reads the Writing page singleton. */
@@ -99,23 +96,6 @@ export const ContentServiceLive = Layer.succeed(ContentService, {
       };
     }),
 
-  readFeatureFlags: () =>
-    Effect.gen(function* () {
-      const data = yield* Effect.tryPromise({
-        try: () => reader.singletons.featureFlags?.read(),
-        catch: (cause) => new ContentReadError({ slug: "featureFlags", cause }),
-      });
-
-      if (!data) {
-        return yield* Effect.fail(new ContentNotFoundError({ slug: "featureFlags" }));
-      }
-
-      return {
-        showWriting: data.showWriting ?? false,
-        showContact: data.showContact ?? false,
-      };
-    }),
-
   readHome: () =>
     Effect.gen(function* () {
       const data = yield* Effect.tryPromise({
@@ -159,6 +139,7 @@ export const ContentServiceLive = Layer.succeed(ContentService, {
       }
 
       return {
+        eyebrow: data.eyebrow ?? "WRITING",
         title: data.title ?? "",
         description: data.description ?? "",
         featuredPostSlug: data.featuredPost ?? null,
@@ -186,14 +167,17 @@ export const ContentServiceLive = Layer.succeed(ContentService, {
   listPosts: () =>
     Effect.tryPromise(async () => {
       const entries = await reader.collections.posts?.all();
-      return (entries ?? []).map((e) => ({
-        slug: e.slug,
-        title: e.entry.title,
-        summary: e.entry.summary,
-        tags: e.entry.tags,
-        publishedAt: e.entry.publishedAt,
-        body: "",
-      }));
+      return Promise.all(
+        (entries ?? []).map(async (e) => ({
+          slug: e.slug,
+          title: e.entry.title,
+          summary: e.entry.summary,
+          cardImage: e.entry.cardImage,
+          tags: e.entry.tags,
+          publishedAt: e.entry.publishedAt,
+          body: await e.entry.body(),
+        })),
+      );
     }).pipe(
       Effect.catchAll((error) => {
         console.error("Failed to list posts:", error);
@@ -228,6 +212,7 @@ export const ContentServiceLive = Layer.succeed(ContentService, {
           slug,
           title: data.title,
           summary: data.summary,
+          cardImage: data.cardImage,
           tags: data.tags,
           publishedAt: data.publishedAt,
           body: data.body,

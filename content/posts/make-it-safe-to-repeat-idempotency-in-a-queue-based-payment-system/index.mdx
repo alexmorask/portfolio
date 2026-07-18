@@ -1,0 +1,287 @@
+---
+title: 'Make It Safe to Repeat: Idempotency in a Queue-Based Payment System'
+summary: >-
+  A payment retry silently double-charges a customer, and the standard fix — an
+  idempotency key — only works if you're precise about when it's minted and who
+  owns it. This walks a charge flow from a naive retry through a client-owned
+  key, a durable request-status table, and a reconciliation job that closes the
+  gap when a worker dies mid-flight.
+cardImage: >-
+  /images/posts/make-it-safe-to-repeat-idempotency-in-a-queue-based-payment-system/cardImage.png
+tags:
+  - idempotency
+  - payments
+  - distributed-systems
+  - reconciliation
+publishedAt: 2026-07-19
+status: published
+---
+Consider this scenario: a user submits a payment on your web app, which sends a request to your server to trigger your payment workflow. The server enqueues a job to process that payment and quickly responds with a `202 Accepted` to the client.
+
+All good so far.
+
+That job is then picked up by a background worker for processing. The worker sends a request to your payment provider to charge the user's payment method. The provider receives the request, charges the payment method and then, somewhere on the way back, the response times out and your worker never learns the charge went through. An exception is thrown and the job fails.
+
+Now we've got a problem. Your queue is configured to retry on failures, so it picks up that failed job and hands it to your worker again. The worker does exactly what it did the first time: tells the provider to charge the payment method. This time, the request succeeds and your worker gets a `201 Created` back, so the charge gets written down in your database and the job exits successfully.
+
+Everything *looks* like it's working as intended until the Customer Support team raises a defect: this customer got charged twice for the same purchase.
+
+What's tough here is that nothing really malfunctioned. The retry did exactly what it was supposed to do. And what happens if you don't retry? Then the next time the provider fails, the payment will just vanish and a customer who wants to pay is left unable to. If you retry it, you may charge twice, but if you don't, you may never charge at all.
+
+<RetryDoubleChargeDiagram />
+
+## The retry problem
+
+The standard and obvious answer in this situation is to use an idempotency key. But *when* that key is generated and *how* it's managed have significant implications on whether your system can actually achieve idempotency when communicating with your payment provider.
+
+Let's say you try the obvious fix first: update your worker to generate an idempotency key when it executes the job, and then pass that key along in its charge request to the provider.
+
+```typescript
+async function processChargeJob(job: ChargeJob) {
+  // Mint the idempotency key — generated fresh inside the job run
+  const idempotencyKey = crypto.randomUUID();
+
+  // Make the request to the provider
+  const charge = await provider.charge({
+    amount: job.amount,
+    currency: job.currency,
+    paymentMethodId: job.paymentMethodId,
+    idempotencyKey,
+  });
+
+  // Write the charge down in our database
+  await db.charges.insert({
+    jobId: job.id,
+    providerChargeId: charge.id,
+    amount: job.amount,
+    status: "completed",
+  });
+}
+```
+
+If the worker is set up to retry the request on failure, you've achieved idempotency for the follow-up requests the worker will make itself. The original request to the provider can time out on its way back while still having charged the customer, and the next request from the worker will carry the same key—so the provider recognizes it and *won't* trigger a second charge.
+
+But what happens if the worker doesn't retry the request, and instead throws an exception to fail fast so that the entire job is re-processed by your queue, like in the original scenario?
+
+Now you've got the same problem as before. On each job run, the worker mints a brand-new idempotency key. So if on the first run, the request to the provider fails while still charging the payment method, the queue will see a failed job and re-run it. But the second run mints a different idempotency key and since the provider has never seen this key before, it treats it as a fresh charge. We minted the idempotency key too early for it to actually help us.
+
+<EarlyKeyMintDiagram />
+
+## Making the key durable
+
+The "key" here is to persist the idempotency key before its side effect takes place, so it survives redelivery. Let's mint it in the server process that handles the incoming client request, then attach it directly to the enqueued job's payload.
+
+```typescript
+async function processChargeJob(job: ChargeJob) {
+  // Read the idempotency key off the job — minted before enqueue, not here
+  const { idempotencyKey } = job;
+
+  const charge = await provider.charge({
+    amount: job.amount,
+    currency: job.currency,
+    paymentMethodId: job.paymentMethodId,
+    idempotencyKey,
+  });
+
+  await db.charges.insert({
+    jobId: job.id,
+    providerChargeId: charge.id,
+    amount: job.amount,
+    status: "completed",
+  });
+}
+```
+
+Now if we assume, as most queues do, that the job payload is persisted and redelivered with each attempt, we've made the idempotency key durable. In our failure scenario, every re-run of the job pulls the same key off the job's payload and sends it to the provider, which gives us idempotency across job runs.
+
+## Idempotency as a contract
+
+So our system is in a good spot: it supports idempotent retries of a job that performs a side-effect-producing operation against our payment provider. But there's a piece we've been ignoring—what guarantees idempotency of the job's *creation*?
+
+For that, we have to turn back towards the client. Because at the moment, despite the guards we've put in place, nothing is preventing the client from sending the same payment request twice, causing the server to mint two different idempotency keys that represent the exact same operation and having both of those operations processed by our queue.
+
+What I'd like to propose here as a resolution is that we treat idempotency as a **client ↔ server** contract. If we move the responsibility for minting our idempotency key from the server to the client, we now have the tools to construct a fully retry-able, side effect-producing operation. That's because *only the client* knows whether two requests represent the same purchase intent or two genuinely separate purchases.
+
+So our new contract will tell the client they need to send an idempotency key, but the server still has to enforce it. What does this process actually look like when a request lands?
+
+The first thing we want to do is set up a more robust durable storage mechanism than just dropping the idempotency key on the job payload. We do this because the server now has to check, on every incoming request, whether it's already seen this key and then act on what it finds.
+
+A SQL table for this durability could look like something like this:
+
+```sql
+CREATE TABLE idempotent_requests (
+    client_key      TEXT        PRIMARY KEY,
+    status          TEXT        NOT NULL DEFAULT 'in_progress'
+                    CHECK (status IN ('in_progress', 'completed', 'failed')),
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at      TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+```
+
+Let's assess each of these columns one by one:
+
+* `client_key`: This is the idempotency key sent by the client. The reason we set it as the primary key is two-fold:
+  1. It gives us an index to quickly look up idempotent requests every time the server receives a request
+  2. It gives us database-backed uniqueness (accept the first and reject the second), which defends against concurrent requests racing past our idempotency check and each enqueuing a job
+* `status`: An enum that tracks where the operation is in its lifecycle. `in_progress` (which is the default when the row is created) means the operation is already running. `completed` means it's done and `failed` means it terminated unsuccessfully.
+* `created_at`: When the request was first seen. Gives us the ability to expire rows on a rolling window rather than let a massive table accumulate. It's also useful for debugging and auditing.
+* `updated_at`: When the `status` of the row was last updated. This is mostly for observability as it can tell us how long an operation sat `in_progress`.
+
+When the server receives a request, it will look up the idempotency key in the `idempotent_requests` table via the `client_key`. If it's never seen the idempotency key before, it's going to insert a new row into the table, enqueue the payment processing job and then return a `202 Accepted`. If it does find a matching row, it can use the status to determine how to respond to the client:
+
+Note that I'm using a `200 OK` response for each of these situations. This is because the actual HTTP request the client sent was perfectly fine and the client is receiving updates on the underlying operation via the response body.
+
+<StatusResponseTable />
+
+Here's an example of what that could look like on your server's end.
+
+```typescript
+async function handleChargeRequest(req: ChargeRequest): Promise<Response> {
+  const { idempotencyKey } = req.headers;
+
+  // Try to claim this key. The PRIMARY KEY makes the insert atomic:
+  // if a concurrent request already inserted it, this throws.
+  try {
+    await db.idempotentRequests.insert({ client_key: idempotencyKey });
+  } catch (err) {
+    if (isUniqueViolation(err)) {
+      // Someone already claimed this key — treat as a duplicate.
+      return replayExisting(idempotencyKey);
+    }
+    throw err;
+  }
+
+  // We won the race. Enqueue the job and accept.
+  await queue.enqueue({ idempotencyKey, ...req.body });
+  return response(202, { status: "in_progress" });
+}
+
+async function replayExisting(idempotencyKey: string): Promise<Response> {
+  const record = await db.idempotentRequests.get(idempotencyKey);
+
+  switch (record.status) {
+    case "in_progress":
+      return response(200, { status: "in_progress" });
+    case "completed": {
+      const charge = await db.charges.getByKey(idempotencyKey);
+      return response(200, charge); // replay — 200, not 201
+    }
+    case "failed":
+      return response(200, { status: "failed" });
+  }
+}
+```
+
+And here's a stepper detailing the race condition we prevented via the uniqueness constraint provided by the `idempotent_requests` table's primary key.
+
+<ConcurrentRaceDiagram />
+
+Once `queue.enqueue` executes, we're back to our job processing flow. The job still contains the idempotency key in its payload, but the worker processing it can now use that to update the state of the idempotent operation based on the result of our call to the payment provider.
+
+```typescript
+async function processChargeJob(job: ChargeJob) {
+  const { idempotencyKey } = job;
+
+  let charge: Charge;
+  try {
+    charge = await provider.charge({
+      amount: job.amount,
+      currency: job.currency,
+      paymentMethodId: job.paymentMethodId,
+      idempotencyKey,
+      // Stamp our own key onto the charge so we can find it later,
+      // during reconciliation, by searching the provider's records.
+      metadata: { idempotencyKey },
+    });
+  } catch (err) {
+    // Provider returned a terminal failure (e.g. a decline).
+    await db.idempotentRequests.update(idempotencyKey, { status: "failed" });
+    throw err;
+  }
+
+  // Both DB writes commit together — or neither does.
+  await db.transaction(async (tx) => {
+    await tx.charges.insert({
+      jobId: job.id,
+      clientKey: idempotencyKey,
+      providerChargeId: charge.id,
+      amount: job.amount,
+      status: "completed",
+    });
+    await tx.idempotentRequests.update(idempotencyKey, { status: "completed" });
+  });
+}
+```
+
+## Reconciling what you can't prevent
+
+To fully close the loop though, we need to address one more thing. Looking at the code above, what would happen if the call to the payment provider succeeded and charged the customer's payment method, but the worker died before the database transaction committed? We'd never record the `charge` in our DB or update the `idempotent_request`. We'd be left with a request that's stuck `in_progress` even though the charge succeeded.
+
+<StuckInProgressDiagram />
+
+For this, we can use a scheduled reconciliation job that runs in the background. When spun up by your scheduling system, this job will check for requests that have been stuck past a configured threshold, in bounded batches, and attempt to reconcile them with the payment provider by:
+
+1. Searching for the charge in the provider's system using the metadata we attached to the charge in the previous code snippet
+2. If we don't find any, mark it as failed since the provider has no record of it
+3. Otherwise, upsert the `charge` and update the `idempotent_request` in the same transaction like we did with the `processChargeJob`
+
+```typescript
+async function reconcileStuckRequests() {
+  // Only sweep requests old enough that a healthy operation would
+  // already have finished — this keeps us from racing a job that's
+  // simply still running. The threshold is a config value we tune.
+  const stuck = await db.idempotentRequests.findMany({
+    where: {
+      status: "in_progress",
+      updatedAt: { olderThan: config.reconciliationThreshold },
+    },
+    limit: config.reconciliationBatchSize,
+  });
+
+  for (const request of stuck) {
+    await reconcileOne(request);
+  }
+}
+
+async function reconcileOne(request: IdempotentRequest) {
+  // We can't ask the provider "what happened under this idempotency key?"
+  // Instead, we search their charges for the key we stamped into metadata.
+  const charges = await provider.charges.search({
+    metadata: { idempotencyKey: request.client_key },
+  });
+
+  if (charges.length === 0) {
+    // The provider has no record of it — the charge never happened.
+    await db.idempotentRequests.update(request.client_key, { status: "failed" });
+    return;
+  }
+
+  // The charge did go through. Converge our state to the provider's.
+  const charge = charges[0];
+  await db.transaction(async (tx) => {
+    await tx.charges.upsert({
+      clientKey: request.client_key,
+      providerChargeId: charge.id,
+      amount: charge.amount,
+      status: "completed",
+    });
+    await tx.idempotentRequests.update(request.client_key, { status: "completed" });
+  });
+}
+```
+
+One thing worth calling out here is that this job itself is idempotent. If it crashes halfway through, the next run just finds the same stuck request and tries again. Because we're searching the provider by the same metadata and converging in a single transaction, running it once or running it ten times lands us in the same place. The thing that cleans up our unresolved operations has to be safe to retry too.
+
+## Prevent where you can
+
+Now if you step back from this whole discussion, you'll notice that we basically solved the same problem three different times, each at a different boundary.
+
+1. The provider's idempotency key made the charge safe to retry
+2. Persisting that key on the job's payload let the job survive redelivery
+3. The primary key on our `idempotent_requests` table kept two concurrent requests from becoming a race condition
+
+The reconciler is a bit different, but functionally represents the tacit admission that nothing is truly preventable in a distributed system. Weird things are going to happen; worker services are randomly going to die. That's why you always want to prevent where you can, but reconcile to the truth when you can't.
+
+For the purpose of this piece, I kept the example to a single charge. But think about what would happen to our idempotency guarantee if that charge request was actually a subscription creation request which fanned out multiple requests in our system like tokenizing a payment method, creating a customer and starting the subscription itself? Our system is going to need to be reworked, which will be the subject of a later post.
+
+But the concluding idea holds regardless: at no point in this process did we ever try to guarantee one-time delivery, because that's just not realistic. Instead, we made each operation *safe to repeat* and continuously pushed the guarantee to whatever layer could actually enforce it: the provider, the queue and then the database. Ultimately we traded a hard problem for an easy one.

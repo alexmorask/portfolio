@@ -44,14 +44,10 @@ export interface AboutPage {
 }
 
 export interface WritingPage {
+  readonly eyebrow: string;
   readonly title: string;
   readonly description: string;
   readonly featuredPostSlug: string | null;
-}
-
-export interface FeatureFlags {
-  readonly showWriting: boolean;
-  readonly showContact: boolean;
 }
 
 export interface ContactPage {

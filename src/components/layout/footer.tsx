@@ -1,10 +1,6 @@
 import Link from "next/link";
 
-interface FooterProps {
-  readonly showContact?: boolean;
-}
-
-export function Footer({ showContact = false }: FooterProps) {
+export function Footer() {
   return (
     <footer className="flex flex-col items-center gap-3 border-t border-white/8 px-5 py-6 lg:flex-row lg:items-center lg:justify-between lg:px-14 lg:py-8">
       <span className="text-center font-mono text-xs text-text-faint">
@@ -25,14 +21,12 @@ export function Footer({ showContact = false }: FooterProps) {
           linkedin.com/in/alexmorask
         </Link>
 
-        {showContact && (
-          <Link
-            href="/contact"
-            className="font-mono text-xs font-semibold text-primary transition-colors duration-150 hover:text-foreground"
-          >
-            Get in touch &rarr;
-          </Link>
-        )}
+        <Link
+          href="/contact"
+          className="font-mono text-xs font-semibold text-primary transition-colors duration-150 hover:text-foreground"
+        >
+          Get in touch &rarr;
+        </Link>
       </div>
     </footer>
   );

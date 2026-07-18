@@ -7,7 +7,6 @@ import { Footer } from "@/components/layout/footer";
 import { Nav } from "@/components/layout/nav";
 import { SiteContainer } from "@/components/layout/site-container";
 import { ContentService, ContentServiceLive } from "@/lib/effect/content-service";
-import { buildNavLinks } from "@/lib/nav";
 import type { HomePage } from "@/types/content/singletons";
 
 function fallbackHome(): HomePage {
@@ -28,47 +27,39 @@ export default async function Home() {
     Effect.gen(function* () {
       const service = yield* ContentService;
 
-      const [navLinks, posts, flags] = yield* Effect.all([
-        service.listNavLinks(),
-        service.listPosts(),
-        service
-          .readFeatureFlags()
-          .pipe(Effect.catchAll(() => Effect.succeed({ showWriting: false, showContact: false }))),
-      ]);
+      const [navLinks, posts] = yield* Effect.all([service.listNavLinks(), service.listPosts()]);
 
       const home = yield* service
         .readHome()
         .pipe(Effect.catchAll(() => Effect.succeed(fallbackHome())));
 
-      const latestPost = flags.showWriting
-        ? posts
-            .filter((p) => p.publishedAt)
-            .sort(
-              (a, b) =>
-                new Date(b.publishedAt as string).getTime() -
-                new Date(a.publishedAt as string).getTime(),
-            )[0]
-        : undefined;
+      const latestPost = posts
+        .filter((p) => p.publishedAt)
+        .sort(
+          (a, b) =>
+            new Date(b.publishedAt as string).getTime() -
+            new Date(a.publishedAt as string).getTime(),
+        )[0];
 
-      return { home, navLinks, latestPost, flags };
+      return { home, navLinks, latestPost };
     }).pipe(Effect.provide(ContentServiceLive)),
   );
 
-  const { home, navLinks, latestPost, flags } = data;
+  const { home, navLinks, latestPost } = data;
 
   return (
     <SiteContainer>
-      <Nav links={buildNavLinks(navLinks, flags)} />
+      <Nav links={navLinks} />
 
-      <HeroSection home={home} latestPost={latestPost} showContact={flags.showContact} />
+      <HeroSection home={home} latestPost={latestPost} />
 
       <FocusAreas heading={home.focusAreas.heading} items={home.focusAreas.items} />
 
       <ExperienceTimeline heading={home.experience.heading} items={home.experience.items} />
 
-      {latestPost && flags.showWriting && <LatestPostCard post={latestPost} />}
+      {latestPost && <LatestPostCard post={latestPost} />}
 
-      <Footer showContact={flags.showContact} />
+      <Footer />
     </SiteContainer>
   );
 }

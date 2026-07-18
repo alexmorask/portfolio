@@ -7,7 +7,6 @@ import { Footer } from "@/components/layout/footer";
 import { Nav } from "@/components/layout/nav";
 import { SiteContainer } from "@/components/layout/site-container";
 import { ContentService, ContentServiceLive } from "@/lib/effect/content-service";
-import { buildNavLinks } from "@/lib/nav";
 import type { AboutPage } from "@/types/content/singletons";
 
 function fallbackAbout(): AboutPage {
@@ -36,26 +35,21 @@ export default async function About() {
     Effect.gen(function* () {
       const service = yield* ContentService;
 
-      const [navLinks, flags] = yield* Effect.all([
-        service.listNavLinks(),
-        service
-          .readFeatureFlags()
-          .pipe(Effect.catchAll(() => Effect.succeed({ showWriting: false, showContact: false }))),
-      ]);
+      const navLinks = yield* service.listNavLinks();
 
       const about = yield* service
         .readAbout()
         .pipe(Effect.catchAll(() => Effect.succeed(fallbackAbout())));
 
-      return { about, navLinks, flags };
+      return { about, navLinks };
     }).pipe(Effect.provide(ContentServiceLive)),
   );
 
-  const { about, navLinks, flags } = data;
+  const { about, navLinks } = data;
 
   return (
     <SiteContainer>
-      <Nav links={buildNavLinks(navLinks, flags)} />
+      <Nav links={navLinks} />
 
       <IntroSection about={about} />
 
@@ -68,7 +62,7 @@ export default async function About() {
         body={about.beyondTheLedger.body}
       />
 
-      <Footer showContact={flags.showContact} />
+      <Footer />
     </SiteContainer>
   );
 }
