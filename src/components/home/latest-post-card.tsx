@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { SectionEyebrow } from "@/components/layout/section-eyebrow";
 import type { Post } from "@/types/content/collections";
@@ -21,42 +22,52 @@ export function LatestPostCard({ post }: { post: Post }) {
             </div>
           </div>
           <div className="hidden lg:block">
-            <svg viewBox="0 0 400 280" className="block h-full w-full bg-card">
-              <title>Diagram placeholder</title>
-              <defs>
-                <pattern
-                  id="stripeHome"
-                  width="14"
-                  height="14"
-                  patternTransform="rotate(45)"
-                  patternUnits="userSpaceOnUse"
+            {post.cardImage ? (
+              <Image
+                src={post.cardImage}
+                alt=""
+                width={400}
+                height={280}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <svg viewBox="0 0 400 280" className="block h-full w-full bg-card">
+                <title>Diagram placeholder</title>
+                <defs>
+                  <pattern
+                    id="stripeHome"
+                    width="14"
+                    height="14"
+                    patternTransform="rotate(45)"
+                    patternUnits="userSpaceOnUse"
+                  >
+                    <rect width="14" height="14" fill="#0e1117" />
+                    <rect width="7" height="14" fill="rgba(255,255,255,.04)" />
+                  </pattern>
+                </defs>
+                <rect width="400" height="280" fill="url(#stripeHome)" />
+                <text
+                  x="200"
+                  y="132"
+                  textAnchor="middle"
+                  fill="#7a8494"
+                  fontFamily="IBM Plex Mono, monospace"
+                  fontSize="12"
                 >
-                  <rect width="14" height="14" fill="#0e1117" />
-                  <rect width="7" height="14" fill="rgba(255,255,255,.04)" />
-                </pattern>
-              </defs>
-              <rect width="400" height="280" fill="url(#stripeHome)" />
-              <text
-                x="200"
-                y="132"
-                textAnchor="middle"
-                fill="#7a8494"
-                fontFamily="IBM Plex Mono, monospace"
-                fontSize="12"
-              >
-                DIAGRAM PLACEHOLDER
-              </text>
-              <text
-                x="200"
-                y="152"
-                textAnchor="middle"
-                fill="#545c6b"
-                fontFamily="IBM Plex Mono, monospace"
-                fontSize="11"
-              >
-                diagram — idempotent write path
-              </text>
-            </svg>
+                  DIAGRAM PLACEHOLDER
+                </text>
+                <text
+                  x="200"
+                  y="152"
+                  textAnchor="middle"
+                  fill="#545c6b"
+                  fontFamily="IBM Plex Mono, monospace"
+                  fontSize="11"
+                >
+                  diagram — idempotent write path
+                </text>
+              </svg>
+            )}
           </div>
         </div>
       </Link>

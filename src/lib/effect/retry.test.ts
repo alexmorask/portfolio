@@ -77,4 +77,20 @@ describe("ContentService", () => {
       }
     }
   });
+
+  it("returns the real first post for a known slug", async () => {
+    const { ContentServiceLive, ContentService } = await import("./content-service");
+
+    const program = Effect.gen(function* () {
+      const service = yield* ContentService;
+      return yield* service.readPost(
+        "make-it-safe-to-repeat-idempotency-in-a-queue-based-payment-system",
+      );
+    }).pipe(Effect.provide(ContentServiceLive));
+
+    const entry = await Effect.runPromise(program);
+
+    expect(entry.slug).toBe("make-it-safe-to-repeat-idempotency-in-a-queue-based-payment-system");
+    expect(entry.title).toBe("Make It Safe to Repeat: Idempotency in a Queue-Based Payment System");
+  });
 });

@@ -1,4 +1,5 @@
 import { collection, config, fields, singleton } from "@keystatic/core";
+import { getKeystaticComponents } from "@/lib/diagrams";
 
 const keystaticStorage = process.env.NEXT_PUBLIC_KEYSTATIC_STORAGE;
 
@@ -68,6 +69,14 @@ export default config({
           label: "Summary",
           multiline: true,
         }),
+        cardImage: fields.image({
+          label: "Card Image",
+          description:
+            "Thumbnail shown on the Writing page's list and featured cards. Falls back to a placeholder if unset.",
+          directory: "public/images/posts",
+          publicPath: "/images/posts/",
+          validation: { isRequired: false },
+        }),
         tags: fields.multiRelationship({
           label: "Tags",
           collection: "tags",
@@ -88,6 +97,7 @@ export default config({
           label: "Content",
           description:
             "MDX body. Embed diagrams as JSX components (e.g., <IdempotentWritePathDiagram />). Images can be referenced via standard Markdown syntax.",
+          components: getKeystaticComponents(),
         }),
       },
     }),
@@ -257,9 +267,13 @@ export default config({
       },
     }),
     writing: singleton({
-      label: "Writing",
+      label: "Writing Page",
       path: "content/writing/",
       schema: {
+        eyebrow: fields.text({
+          label: "Eyebrow",
+          defaultValue: "WRITING",
+        }),
         title: fields.text({
           label: "Title",
           validation: { length: { min: 1 } },
@@ -275,22 +289,8 @@ export default config({
         }),
       },
     }),
-    featureFlags: singleton({
-      label: "Feature Flags",
-      path: "content/feature-flags/",
-      schema: {
-        showWriting: fields.checkbox({
-          label: "Show Writing page",
-          defaultValue: false,
-        }),
-        showContact: fields.checkbox({
-          label: "Show Contact page",
-          defaultValue: false,
-        }),
-      },
-    }),
     contact: singleton({
-      label: "Contact",
+      label: "Contact Page",
       path: "content/contact/",
       schema: {
         eyebrow: fields.text({
