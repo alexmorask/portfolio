@@ -83,12 +83,14 @@ describe("ContentService", () => {
 
     const program = Effect.gen(function* () {
       const service = yield* ContentService;
-      return yield* service.readPost("idempotency-keys-where-the-boundary-actually-goes");
+      return yield* service.readPost(
+        "make-it-safe-to-repeat-idempotency-in-a-queue-based-payment-system",
+      );
     }).pipe(Effect.provide(ContentServiceLive));
 
     const entry = await Effect.runPromise(program);
 
-    expect(entry.slug).toBe("idempotency-keys-where-the-boundary-actually-goes");
-    expect(entry.title).toBe("Idempotency Keys: Where the Boundary Actually Goes");
+    expect(entry.slug).toBe("make-it-safe-to-repeat-idempotency-in-a-queue-based-payment-system");
+    expect(entry.title).toBe("Make It Safe to Repeat: Idempotency in a Queue-Based Payment System");
   });
 });
